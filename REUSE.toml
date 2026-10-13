@@ -1,0 +1,13 @@
+version = 1
+SPDX-PackageName = "koh/content-provenance"
+SPDX-PackageSupplier = "Kai Ole Hartwig <mail@ole-hartwig.eu>"
+SPDX-PackageDownloadLocation = "https://github.com/ohartwig/content-provenance"
+
+[[annotations]]
+path = "**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = [
+  "2026 Moselwal Digitalagentur GmbH, Kai Ole Hartwig",
+  "2026 Kai Ole Hartwig <mail@ole-hartwig.eu>",
+]
+SPDX-License-Identifier = "GPL-2.0-or-later"

@@ -1,0 +1,275 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:comment>
+    Frontend marking for media: the EU AI Act Article 50(4) disclosure, and the
+    Content Credentials pin. Two marks, two meanings, two data sources — an
+    asset can carry one, both or neither.
+
+      EU icon   driven by {origin}      — this content is AI-generated/modified
+      CR pin    driven by {c2paStatus}  — a C2PA manifest is attached
+
+    Args:
+      origin     (string)  required — AssetOrigin enum value
+      fileUid    (int?)    optional — FAL uid; enables the inspector and the
+                                     raw verification link. Without it the panel
+                                     still renders from stored metadata.
+      c2paStatus (string?) optional — manifest state; the pin shows unless this
+                                      is empty, "none" or "unsigned"
+      aiSystem   (string?) optional — model name, appended after the EU icon
+      compact    (bool?)   optional — basic EU icon, no wording (corner overlay)
+      variant    (string?) optional — "black" (default) or "white" for dark surfaces
+
+    Which EU icon:
+
+      ai_generated -> "AI GENERATED"  the whole asset is AI-created
+      ai_assisted  -> "AI MODIFIED"   human content altered by AI
+      compact      -> the basic icon, the variant the AI Office intends for
+                      pairing with your own label or an interactive layer
+
+    The two labelled icons carry their wording inside the artwork, so no text is
+    repeated beside them — only the model name is appended when known. They are
+    wide (about 3.2:1), so height is set and width follows. Forcing them square
+    would squash the lettering.
+
+    Both marks are referenced as <img> rather than inlined: the official EU SVGs
+    each carry an internal <style> block using generic class names (.cls-1,
+    .cls-2), and two of them inlined into one document overwrite each other's
+    rules. See the READMEs beside the assets, which also carry the trademark
+    conditions for the CR pin.
+
+    Semantic classes only — no utility classes. This partial must render the same
+    inside a Content Blocks element as inside a page template, and a utility class
+    only exists if that project's build happened to scan this file. Everything it
+    needs is in Resources/Public/Frontend/Css/content-provenance.css, which ships
+    with this extension precisely so the marking is legible without a theme's
+    help. That is also what makes the inline duplicate in sitepackage-base
+    unnecessary.
+</f:comment>
+<f:spaceless>
+
+<f:variable name="isAi" value="0"/>
+<f:if condition="{origin} == 'ai_generated' || {origin} == 'ai_assisted'">
+    <f:variable name="isAi" value="1"/>
+</f:if>
+<f:comment>
+    Tested positively against the two states that mean a manifest is actually
+    present. The column's vocabulary is none / signed_own / signed_external /
+    stripped, so a negative test was wrong twice over: it accepted "stripped",
+    where the manifest has been REMOVED and the pin would be a false claim, and
+    it excluded "unsigned", which is not one of the values.
+</f:comment>
+<f:variable name="hasCredentials" value="0"/>
+<f:if condition="{c2paStatus} == 'signed_own' || {c2paStatus} == 'signed_external'">
+    <f:variable name="hasCredentials" value="1"/>
+</f:if>
+<f:variable name="credentialsStripped" value="0"/>
+<f:if condition="{c2paStatus} == 'stripped'">
+    <f:variable name="credentialsStripped" value="1"/>
+</f:if>
+
+<f:if condition="{isAi} || {hasCredentials} || {credentialsStripped}">
+    <span class="cb-provenance-marks">
+
+        <f:comment>
+            Everything about the EU icon is computed inside this branch. It used
+            to sit outside, which meant an asset with only Content Credentials
+            and no AI origin still had "AI modified" assembled as its accessible
+            name from the else-branch below — a marking that states something
+            untrue is worse than no marking, so the scope matters.
+        </f:comment>
+        <f:if condition="{isAi}">
+            <f:variable name="euVariant" value="black"/>
+            <f:if condition="{variant} == 'white'">
+                <f:variable name="euVariant" value="white"/>
+            </f:if>
+
+            <f:if condition="{origin} == 'ai_generated'">
+                <f:then>
+                    <f:variable name="euIcon" value="ai-generated"/>
+                    <f:variable name="euLabel">
+                        <f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:ai_badge.generated"
+                                     default="AI generated"/>
+                    </f:variable>
+                </f:then>
+                <f:else>
+                    <f:variable name="euIcon" value="ai-modified"/>
+                    <f:variable name="euLabel">
+                        <f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:ai_badge.modified"
+                                     default="AI modified"/>
+                    </f:variable>
+                </f:else>
+            </f:if>
+            <f:if condition="{compact}">
+                <f:variable name="euIcon" value="ai"/>
+            </f:if>
+
+            <f:comment>
+                The accessible name is assembled first rather than built inside
+                the attribute: a nested tag ViewHelper in an attribute value
+                parses, but it is the kind of thing that breaks quietly on a
+                Fluid upgrade.
+            </f:comment>
+            <f:variable name="euAria" value="{euLabel -> f:format.trim()}"/>
+            <f:if condition="{aiSystem}">
+                <f:variable name="euAria" value="{euLabel -> f:format.trim()} — {aiSystem}"/>
+            </f:if>
+
+            <span class="cb-ai-content-badge" aria-label="{euAria}">
+                <f:comment>
+                    height as an HTML attribute, not only in CSS: the labelled
+                    icons are about 3.2:1, and a theme overriding this with a
+                    square rule would squash the lettering. The intrinsic ratio
+                    survives either way. Styles ship with this extension, in
+                    Resources/Public/Css/ai-content-badge.css.
+                </f:comment>
+                <img class="cb-ai-content-badge__icon"
+                     src="{f:uri.resource(path: 'Icons/EuAiLabel/{euIcon}-{euVariant}-transparent.svg', extensionName: 'ContentProvenance')}"
+                     height="16"
+                     alt=""
+                     aria-hidden="true"
+                     loading="lazy"
+                     decoding="async"/>
+                <f:comment>
+                    Compact mode carries no wording, so the accessible name on
+                    the wrapper is the only disclosure a screen reader gets — it
+                    must stay. In the labelled modes the artwork already says
+                    it, so only the model name is added, and only when known.
+                </f:comment>
+                <f:if condition="{compact} == 0 && {aiSystem}">
+                    <span class="cb-ai-content-badge__system">{aiSystem}</span>
+                </f:if>
+            </span>
+        </f:if>
+
+        <f:comment>
+            The Content Credentials pin is a separate mark, not an alternative
+            to the EU icon: it says a C2PA manifest is attached and can be
+            inspected, which is true of human-made assets too. Bound to
+            c2paStatus alone — showing it without a manifest would be a false
+            claim.
+
+            Trademark conditions are in the README beside the asset. The one
+            that shows up in the markup: the mark must not be altered, so the
+            file is upstream's byte-for-byte and only inherits currentColor,
+            which is upstream's own design. The tm marker satisfies the
+            notice-on-first-appearance condition and is deliberately left in the
+            accessibility tree — announcing it once is the point of a notice.
+        </f:comment>
+        <f:if condition="{hasCredentials}">
+            <f:comment>
+                details/summary rather than a button plus script: the pin has to
+                work before JavaScript arrives and after it fails, and summary is
+                focusable and toggles on Enter and Space without any of our code.
+                No positioning library, no popover polyfill, no hydration.
+            </f:comment>
+            <f:comment>
+                data-cp-file is what the inspector needs; without it the script
+                binds nothing and the panel simply stays as rendered. The wording
+                travels in data attributes so the script never hardcodes English —
+                translations stay in the XLF, where they belong.
+            </f:comment>
+            <details class="cb-content-credentials"
+                     data-cp-file="{fileUid}"
+                     data-cp-live-heading="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.heading', default: 'Checked in the file')}"
+                     data-cp-live-manifest="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.manifest', default: 'Manifest')}"
+                     data-cp-live-present="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.present', default: 'present')}"
+                     data-cp-live-stripped="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.stripped', default: 'removed from the file')}"
+                     data-cp-live-absent="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.absent', default: 'none')}"
+                     data-cp-live-issuer="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.issuer', default: 'Issuer')}"
+                     data-cp-live-system="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.system', default: 'AI system')}"
+                     data-cp-live-anchor="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.anchor')}"
+                     data-cp-live-error="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_live.error')}">
+                <summary class="cb-content-credentials__trigger"
+                         aria-label="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_badge.aria', default: 'Content Credentials attached — show details')}">
+                    <img class="cb-content-credentials__pin"
+                         src="{f:uri.resource(path: 'Icons/ContentCredentials/cr-icon.svg', extensionName: 'ContentProvenance')}"
+                         height="14"
+                         width="14"
+                         alt=""
+                         aria-hidden="true"
+                         loading="lazy"
+                         decoding="async"/>
+                    <span class="cb-content-credentials__tm">&#8482;</span>
+                </summary>
+
+                <div class="cb-content-credentials__panel">
+                    <p class="cb-content-credentials__heading">
+                        <f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.heading"
+                                     default="Content Credentials"/>
+                    </p>
+                    <dl class="cb-content-credentials__facts">
+                        <dt><f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.signer"
+                                         default="Signed by"/></dt>
+                        <dd>
+                            <f:if condition="{c2paStatus} == 'signed_own'">
+                                <f:then><f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.signer.own"
+                                                     default="this site"/></f:then>
+                                <f:else><f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.signer.external"
+                                                     default="the originator, outside this site"/></f:else>
+                            </f:if>
+                        </dd>
+
+                        <dt><f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.origin"
+                                         default="Origin"/></dt>
+                        <dd>
+                            <f:if condition="{isAi}">
+                                <f:then>{euAria}</f:then>
+                                <f:else><f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.origin.human"
+                                                     default="no AI use recorded"/></f:else>
+                            </f:if>
+                        </dd>
+                    </dl>
+
+                    <f:comment>
+                        Deliberately says what the manifest proves and what it
+                        does not. The signing certificate comes from this site's
+                        own CA, so a public verifier will report an unknown
+                        issuer — claiming more than that in the panel would be
+                        the same overstatement the marking is supposed to avoid.
+
+                        The prompt is stored (tx_provenance_ai_prompt) and is NOT
+                        shown: it is internal wording, and publishing it is a
+                        separate decision from disclosing that AI was used.
+                    </f:comment>
+                    <p class="cb-content-credentials__note">
+                        <f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.note"
+                                     default="The file carries a signed provenance manifest. It records how the asset came about; it is not a statement about the accuracy of the content."/>
+                    </p>
+
+                    <f:comment>
+                        The same endpoint the inspector calls, as a plain link.
+                        Without JavaScript this is the whole verification path —
+                        raw JSON, but it is the file's own answer rather than
+                        ours, and it is reachable by anyone including a
+                        fact-checker who will not run our script.
+                    </f:comment>
+                    <f:if condition="{fileUid}">
+                        <p class="cb-content-credentials__raw">
+                            <a href="/_provenance/api/asset?file={fileUid}" rel="nofollow">
+                                <f:translate key="LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_panel.raw" default="Open the raw verification data"/>
+                            </a>
+                        </p>
+                    </f:if>
+                </div>
+            </details>
+        </f:if>
+
+        <f:comment>
+            "stripped" is worth showing rather than hiding: it means the asset
+            once carried credentials and something along the way removed them —
+            typically an image pipeline that re-encodes without preserving
+            metadata. Silently dropping the marker would hide exactly the
+            failure that needs fixing.
+        </f:comment>
+        <f:if condition="{credentialsStripped}">
+            <span class="cb-content-credentials cb-content-credentials--stripped"
+                  aria-label="{f:translate(key: 'LLL:EXT:content_provenance/Resources/Private/Language/locallang_db.xlf:cr_badge.stripped', default: 'Content Credentials were removed from this file')}">
+                <img class="cb-content-credentials__pin"
+                     src="{f:uri.resource(path: 'Icons/ContentCredentials/cr-icon.svg', extensionName: 'ContentProvenance')}"
+                     height="14" width="14" alt="" aria-hidden="true" loading="lazy" decoding="async"/>
+                <span class="cb-content-credentials__tm">&#8482;</span>
+            </span>
+        </f:if>
+    </span>
+</f:if>
+</f:spaceless>
+</html>

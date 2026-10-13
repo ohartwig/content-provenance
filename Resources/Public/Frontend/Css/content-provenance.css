@@ -1,0 +1,200 @@
+/*
+ * Marking for AI-generated content and for attached Content Credentials.
+ *
+ * Lives here rather than in a site package because the markup, the icons and
+ * the data all belong to this extension — a theme should be able to restyle
+ * this, not be required to supply it for the marking to be legible at all.
+ *
+ * Sizing note: the two labelled EU icons are wide (about 3.2:1). Their height
+ * is set as an HTML attribute on the element so they survive a stylesheet that
+ * assumes a square, and nothing here reintroduces a fixed width.
+ */
+
+.cb-provenance-marks {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cb-ai-content-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  /* Not a link and not decoration: it should read as a statement about the
+     content, so it inherits colour rather than competing for attention. */
+  color: inherit;
+}
+
+.cb-ai-content-badge__icon {
+  height: 1rem;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.cb-ai-content-badge__system {
+  opacity: 0.75;
+}
+
+.cb-content-credentials {
+  display: inline-flex;
+  align-items: flex-start;
+  flex: 0 0 auto;
+}
+
+.cb-content-credentials__pin {
+  height: 0.875rem;
+  width: 0.875rem;
+  flex: 0 0 auto;
+  /* Upstream ships this with fill="currentColor" — inheriting is the asset's
+     own design, not a modification of the mark. */
+  color: inherit;
+}
+
+/* The trademark notice has to be present, not prominent. Kept in the
+   accessibility tree on purpose: announcing it once is the point of the
+   notice, and hiding it with display:none would remove it from there too. */
+.cb-content-credentials__tm {
+  font-size: 0.5em;
+  line-height: 1;
+  margin-left: 0.0625rem;
+  opacity: 0.7;
+}
+
+@media (prefers-contrast: more) {
+  .cb-ai-content-badge__system,
+  .cb-content-credentials__tm {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * The pin as a disclosure widget.
+ *
+ * details/summary carries the behaviour, so there is no script here and none
+ * is needed: the panel opens on click, on Enter and on Space, and it still
+ * opens if our CSS never loads — it just looks like a plain list then.
+ * ------------------------------------------------------------------------- */
+
+.cb-content-credentials {
+  position: relative;
+}
+
+.cb-content-credentials__trigger {
+  display: inline-flex;
+  align-items: flex-start;
+  cursor: pointer;
+  /* The default disclosure triangle would sit next to a 14px pin and dominate
+     it. Removed in both the standard and the WebKit-prefixed form. */
+  list-style: none;
+}
+
+.cb-content-credentials__trigger::-webkit-details-marker {
+  display: none;
+}
+
+/* Focus must stay visible — this is the only interactive element in the
+   marking, and it is small. */
+.cb-content-credentials__trigger:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.cb-content-credentials__panel {
+  position: absolute;
+  z-index: 20;
+  inset-inline-start: 0;
+  top: calc(100% + 0.375rem);
+  min-width: 16rem;
+  max-width: min(22rem, calc(100vw - 2rem));
+  padding: 0.75rem 0.875rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  background: Canvas;
+  color: CanvasText;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  /* Canvas/CanvasText are system colours, so the panel stays readable in a
+     forced-colours mode instead of inheriting a transparent background. */
+}
+
+.cb-content-credentials__heading {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.cb-content-credentials__facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.125rem 0.5rem;
+  margin: 0;
+}
+
+.cb-content-credentials__facts dt {
+  opacity: 0.7;
+}
+
+.cb-content-credentials__facts dd {
+  margin: 0;
+}
+
+.cb-content-credentials__note {
+  margin: 0.5rem 0 0;
+  opacity: 0.8;
+}
+
+/* Credentials that were removed. Same mark, but struck through, because the
+   claim is the opposite one: provenance was there and is gone. */
+.cb-content-credentials--stripped .cb-content-credentials__pin {
+  opacity: 0.45;
+}
+
+.cb-content-credentials--stripped::after {
+  content: "";
+  position: absolute;
+  inset-inline: -1px;
+  top: 50%;
+  border-top: 1px solid currentColor;
+  opacity: 0.6;
+}
+
+@media (prefers-contrast: more) {
+  .cb-content-credentials__facts dt,
+  .cb-content-credentials__note,
+  .cb-content-credentials--stripped .cb-content-credentials__pin {
+    opacity: 1;
+  }
+}
+
+/* Live result appended by the inspector. Styled so the panel does not jump when
+   it arrives: it sits below the stored facts and is visually secondary, because
+   the stored facts are what renders without JavaScript. */
+.cb-content-credentials__live {
+  margin-top: 0.625rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid currentColor;
+}
+
+.cb-content-credentials__live-heading {
+  margin: 0 0 0.375rem;
+  font-weight: 600;
+}
+
+.cb-content-credentials__live-anchor,
+.cb-content-credentials__live-error {
+  margin: 0.5rem 0 0;
+  opacity: 0.8;
+}
+
+.cb-content-credentials__raw {
+  margin: 0.5rem 0 0;
+}
+
+@media (prefers-contrast: more) {
+  .cb-content-credentials__live-anchor,
+  .cb-content-credentials__live-error {
+    opacity: 1;
+  }
+}

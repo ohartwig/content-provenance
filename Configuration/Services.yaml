@@ -1,0 +1,74 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Koh\ContentProvenance\:
+    resource: '../Classes/'
+    exclude:
+      - '../Classes/Domain/Model/*'
+      - '../Classes/Domain/Enum/*'
+      - '../Classes/Domain/Exception/*'
+
+  Koh\ContentProvenance\Infrastructure\KeyManagement\KeyProviderFactory:
+    arguments:
+      $providerType: !php/const Koh\ContentProvenance\Domain\Enum\KeyProviderType::TYPO3
+
+  Koh\ContentProvenance\Domain\Contract\KeyProviderInterface:
+    factory: ['@Koh\ContentProvenance\Infrastructure\KeyManagement\KeyProviderFactory', 'create']
+
+  Koh\ContentProvenance\Domain\Contract\SignatureRepositoryInterface:
+    alias: Koh\ContentProvenance\Infrastructure\Persistence\DoctrineSignatureRepository
+
+  Koh\ContentProvenance\Domain\Contract\AuditLogRepositoryInterface:
+    alias: Koh\ContentProvenance\Infrastructure\Persistence\DoctrineAuditLogRepository
+
+  Koh\ContentProvenance\Domain\Contract\RecordLoaderInterface:
+    alias: Koh\ContentProvenance\Infrastructure\Persistence\DoctrineRecordLoader
+
+  Koh\ContentProvenance\Domain\Contract\AuditLoggerInterface:
+    alias: Koh\ContentProvenance\Application\Service\AuditLogger
+
+  Koh\ContentProvenance\Application\Service\SignedFieldsResolver:
+    arguments:
+      $tableFieldsConfig:
+        tt_content: ['header', 'bodytext', 'subheader', 'image', 'assets']
+        pages: ['title', 'subtitle', 'description', 'abstract']
+
+  Koh\ContentProvenance\Domain\Contract\SignedFieldsResolverInterface:
+    alias: Koh\ContentProvenance\Application\Service\SignedFieldsResolver
+
+  Koh\ContentProvenance\Presentation\Controller\ProvenanceDashboardController:
+    public: true
+
+  # Asset-Provenance auto-detection: c2patool + exiftool subprocess wrappers.
+  # Binary paths are PATH-resolved by default; override via Site Settings if
+  # tools live in non-standard locations. LoggerAwareInterface gets the
+  # logger via TYPO3's LoggerInjection pass — no explicit calls: needed.
+  Koh\ContentProvenance\Application\Service\ContentCredentialsReader:
+    arguments:
+      $c2paToolPath: 'c2patool'
+      $exifToolPath: 'exiftool'
+
+  Koh\ContentProvenance\Application\Service\IptcXmpWriter:
+    arguments:
+      $exifToolPath: 'exiftool'
+
+  # C2PA Cryptographic Signing (Phase 5 — EU AI Act Art. 50 Goldstandard).
+  # Cert + Key kommen vom cert-manager via tls_c2pa_ram-Volume,
+  # mounted in httpd unter /run/c2pa/ (read-only).
+  Koh\ContentProvenance\Application\Service\C2paCertificateProvider:
+    arguments:
+      $certPath: '/run/c2pa/c2pa.crt'
+      $keyPath: '/run/c2pa/c2pa.key'
+
+  Koh\ContentProvenance\Application\Service\C2paManifestSigner:
+    arguments:
+      $c2paToolPath: 'c2patool'
+
+  # ResignAiContentCommand wird über TYPO3's Schema-Registry registriert (autoconfigure).
+
+  # Kein `@cache.…`-Argument: der Cache-Eintrag entsteht in ext_localconf.php
+  # und existiert beim Bau des Containers noch nicht. Die Middleware nimmt
+  # deshalb den CacheManager und holt ihn zur Laufzeit.

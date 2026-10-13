@@ -1,0 +1,4 @@
+/vendor/ export-ignore
+/Tests/ export-ignore
+/.Build/ export-ignore
+composer.lock export-ignore

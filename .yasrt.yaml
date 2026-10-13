@@ -1,0 +1,8 @@
+# Release configuration for yasrt; the shared defaults come from the CI
+# component. Only what this repository does differently is stated here.
+product: extension
+versioning:
+  # The package continues moselwal/content-provenance, whose last release was 0.11.14,
+  # under a new name and a fresh history; the line continues with the next
+  # minor instead of starting over.
+  initial: "0.12.0"

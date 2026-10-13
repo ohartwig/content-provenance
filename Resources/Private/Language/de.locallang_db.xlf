@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="de" datatype="plaintext" original="locallang_db" date="2026-07-26T00:00:00Z" product-name="content_provenance">
+        <header/>
+        <body>
+            <!-- Frontend marking. The wording follows the EU icons, which carry
+                 "AI GENERATED" / "AI MODIFIED" in the artwork itself — the text
+                 here is the accessible name, so it says the same thing in the
+                 page language rather than inventing a different phrasing. -->
+            <trans-unit id="ai_badge.generated" resname="ai_badge.generated">
+                <source>AI generated</source>
+                <target>KI-generiert</target>
+            </trans-unit>
+            <trans-unit id="ai_badge.modified" resname="ai_badge.modified">
+                <source>AI modified</source>
+                <target>KI-bearbeitet</target>
+            </trans-unit>
+            <trans-unit id="cr_badge.aria" resname="cr_badge.aria">
+                <source>Content Credentials attached — show details</source>
+                <target>Content Credentials vorhanden — Details anzeigen</target>
+            </trans-unit>
+            <trans-unit id="cr_badge.stripped" resname="cr_badge.stripped">
+                <source>Content Credentials were removed from this file</source>
+                <target>Content Credentials wurden aus dieser Datei entfernt</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.heading" resname="cr_panel.heading">
+                <source>Content Credentials</source>
+                <target>Content Credentials</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.signer" resname="cr_panel.signer">
+                <source>Signed by</source>
+                <target>Signiert von</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.signer.own" resname="cr_panel.signer.own">
+                <source>this site</source>
+                <target>dieser Website</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.signer.external" resname="cr_panel.signer.external">
+                <source>the originator, outside this site</source>
+                <target>der Quelle, außerhalb dieser Website</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.origin" resname="cr_panel.origin">
+                <source>Origin</source>
+                <target>Herkunft</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.origin.human" resname="cr_panel.origin.human">
+                <source>no AI use recorded</source>
+                <target>keine KI-Nutzung erfasst</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.note" resname="cr_panel.note">
+                <source>The file carries a signed provenance manifest. It records how the asset came about; it is not a statement about the accuracy of the content.</source>
+                <target>Die Datei trägt ein signiertes Herkunftsmanifest. Es dokumentiert, wie das Asset entstanden ist — es ist keine Aussage über die Richtigkeit des Inhalts.</target>
+            </trans-unit>
+            <trans-unit id="cr_live.heading" resname="cr_live.heading">
+                <source>Checked in the file</source>
+                <target>Direkt in der Datei geprüft</target>
+            </trans-unit>
+            <trans-unit id="cr_live.manifest" resname="cr_live.manifest">
+                <source>Manifest</source>
+                <target>Manifest</target>
+            </trans-unit>
+            <trans-unit id="cr_live.present" resname="cr_live.present">
+                <source>present</source>
+                <target>vorhanden</target>
+            </trans-unit>
+            <trans-unit id="cr_live.stripped" resname="cr_live.stripped">
+                <source>removed from the file</source>
+                <target>aus der Datei entfernt</target>
+            </trans-unit>
+            <trans-unit id="cr_live.absent" resname="cr_live.absent">
+                <source>none</source>
+                <target>keines</target>
+            </trans-unit>
+            <trans-unit id="cr_live.issuer" resname="cr_live.issuer">
+                <source>Issuer</source>
+                <target>Aussteller</target>
+            </trans-unit>
+            <trans-unit id="cr_live.system" resname="cr_live.system">
+                <source>AI system</source>
+                <target>KI-System</target>
+            </trans-unit>
+            <trans-unit id="cr_live.anchor" resname="cr_live.anchor">
+                <source>Signed with this site’s own certificate authority, which public validators do not know.</source>
+                <target>Signiert mit der eigenen Zertifizierungsstelle dieser Website, die öffentliche Prüfwerkzeuge nicht kennen.</target>
+            </trans-unit>
+            <trans-unit id="cr_live.error" resname="cr_live.error">
+                <source>The live check did not answer. The details above are from our records.</source>
+                <target>Die Live-Prüfung hat nicht geantwortet. Die Angaben oben stammen aus unseren Daten.</target>
+            </trans-unit>
+            <trans-unit id="cr_panel.raw" resname="cr_panel.raw">
+                <source>Open the raw verification data</source>
+                <target>Rohdaten der Prüfung öffnen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

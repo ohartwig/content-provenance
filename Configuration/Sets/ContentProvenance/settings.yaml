@@ -1,0 +1,23 @@
+contentProvenance:
+  keyProvider:
+    type: 'typo3'
+    filePath: ''
+    vaultUrl: ''
+    vaultToken: ''
+  signing:
+    tables:
+      pages:
+        - 'title'
+        - 'slug'
+        - 'description'
+        - 'abstract'
+      tt_content:
+        - 'header'
+        - 'bodytext'
+        - 'subheader'
+        - 'image'
+  verification:
+    enabled: true
+    apiEndpoint: '/_provenance/api/verify'
+  wellKnown:
+    enabled: true

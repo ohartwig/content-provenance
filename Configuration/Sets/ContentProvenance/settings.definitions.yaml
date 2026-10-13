@@ -1,0 +1,31 @@
+categories:
+  contentProvenance:
+    label: 'Content Provenance'
+  contentProvenance.keyProvider:
+    label: 'Key Provider'
+    parent: contentProvenance
+  contentProvenance.verification:
+    label: 'Verification'
+    parent: contentProvenance
+
+settings:
+  contentProvenance.keyProvider.type:
+    type: string
+    default: 'typo3'
+    label: 'Key Provider Type (typo3, file, vault)'
+    category: contentProvenance.keyProvider
+  contentProvenance.keyProvider.filePath:
+    type: string
+    default: ''
+    label: 'File Key Provider Directory Path'
+    category: contentProvenance.keyProvider
+  contentProvenance.verification.enabled:
+    type: bool
+    default: true
+    label: 'Enable Verification API Endpoint'
+    category: contentProvenance.verification
+  contentProvenance.wellKnown.enabled:
+    type: bool
+    default: true
+    label: 'Enable Well-Known Provenance Keys Endpoint'
+    category: contentProvenance.verification

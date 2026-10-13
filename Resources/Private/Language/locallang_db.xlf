@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="locallang_db" date="2026-05-15T00:00:00Z" product-name="content_provenance">
+        <header/>
+        <body>
+            <!-- Tab + Palette -->
+            <trans-unit id="tab.provenance" resname="tab.provenance">
+                <source>AI Provenance</source>
+            </trans-unit>
+            <trans-unit id="palette.provenance" resname="palette.provenance">
+                <source>Origin &amp; AI System</source>
+            </trans-unit>
+
+            <!-- AssetOrigin enum labels -->
+            <trans-unit id="provenance.origin.inherit" resname="provenance.origin.inherit">
+                <source>Inherit from file (default)</source>
+            </trans-unit>
+            <trans-unit id="provenance.origin.human" resname="provenance.origin.human">
+                <source>Human (no AI involved)</source>
+            </trans-unit>
+            <trans-unit id="provenance.origin.ai_generated" resname="provenance.origin.ai_generated">
+                <source>AI-generated</source>
+            </trans-unit>
+            <trans-unit id="provenance.origin.ai_assisted" resname="provenance.origin.ai_assisted">
+                <source>AI-assisted</source>
+            </trans-unit>
+
+            <!-- C2PA-Status labels -->
+            <trans-unit id="provenance.c2pa.none" resname="provenance.c2pa.none">
+                <source>No Content Credentials</source>
+            </trans-unit>
+            <trans-unit id="provenance.c2pa.signed_own" resname="provenance.c2pa.signed_own">
+                <source>Signed by the site operator</source>
+            </trans-unit>
+            <trans-unit id="provenance.c2pa.signed_external" resname="provenance.c2pa.signed_external">
+                <source>Signed externally (e.g. OpenAI, Adobe)</source>
+            </trans-unit>
+            <trans-unit id="provenance.c2pa.stripped" resname="provenance.c2pa.stripped">
+                <source>Manifest stripped — was signed but lost on re-encoding</source>
+            </trans-unit>
+
+            <!-- sys_file_metadata fields -->
+            <trans-unit id="sys_file_metadata.tx_provenance_origin" resname="sys_file_metadata.tx_provenance_origin">
+                <source>Origin</source>
+            </trans-unit>
+            <trans-unit id="sys_file_metadata.tx_provenance_ai_system" resname="sys_file_metadata.tx_provenance_ai_system">
+                <source>AI system</source>
+            </trans-unit>
+            <trans-unit id="sys_file_metadata.tx_provenance_ai_system.description" resname="sys_file_metadata.tx_provenance_ai_system.description">
+                <source>Free-text model name, e.g. "DALL-E 3", "Midjourney v6", "Suno v3", "RunwayML Gen-3". Optional — leave empty for generic "AI-generated" label.</source>
+            </trans-unit>
+            <trans-unit id="sys_file_metadata.tx_provenance_ai_prompt" resname="sys_file_metadata.tx_provenance_ai_prompt">
+                <source>AI prompt (audit / reproducibility)</source>
+            </trans-unit>
+            <trans-unit id="sys_file_metadata.tx_provenance_ai_prompt.description" resname="sys_file_metadata.tx_provenance_ai_prompt.description">
+                <source>Optional. The prompt used to generate this asset, kept for audit / re-generation.</source>
+            </trans-unit>
+            <trans-unit id="sys_file_metadata.tx_provenance_detected_at" resname="sys_file_metadata.tx_provenance_detected_at">
+                <source>Auto-detected at</source>
+            </trans-unit>
+            <trans-unit id="sys_file_metadata.tx_provenance_c2pa_status" resname="sys_file_metadata.tx_provenance_c2pa_status">
+                <source>Content Credentials (C2PA) status</source>
+            </trans-unit>
+
+            <!-- sys_file_reference fields -->
+            <trans-unit id="sys_file_reference.tx_provenance_origin" resname="sys_file_reference.tx_provenance_origin">
+                <source>Origin override</source>
+            </trans-unit>
+            <trans-unit id="sys_file_reference.tx_provenance_origin.description" resname="sys_file_reference.tx_provenance_origin.description">
+                <source>Override the file's origin for this specific usage. Leave on "Inherit" to use the file-metadata value.</source>
+            </trans-unit>
+
+            <!-- pages fields -->
+            <trans-unit id="pages.tx_provenance_origin" resname="pages.tx_provenance_origin">
+                <source>Page body origin</source>
+            </trans-unit>
+            <trans-unit id="pages.tx_provenance_origin.description" resname="pages.tx_provenance_origin.description">
+                <source>Was the page body / RTE content AI-generated or AI-assisted? Independent of media references on the page.</source>
+            </trans-unit>
+            <trans-unit id="pages.tx_provenance_ai_system" resname="pages.tx_provenance_ai_system">
+                <source>AI system (e.g. "GPT-4")</source>
+            </trans-unit>
+            <!-- Frontend marking: EU AI Act Art. 50(4) disclosure + Content Credentials -->
+            <trans-unit id="ai_badge.generated" resname="ai_badge.generated">
+                <source>AI generated</source>
+            </trans-unit>
+            <trans-unit id="ai_badge.modified" resname="ai_badge.modified">
+                <source>AI modified</source>
+            </trans-unit>
+            <trans-unit id="cr_badge.aria" resname="cr_badge.aria">
+                <source>Content Credentials attached — show details</source>
+            </trans-unit>
+            <trans-unit id="cr_badge.stripped" resname="cr_badge.stripped">
+                <source>Content Credentials were removed from this file</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.heading" resname="cr_panel.heading">
+                <source>Content Credentials</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.signer" resname="cr_panel.signer">
+                <source>Signed by</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.signer.own" resname="cr_panel.signer.own">
+                <source>this site</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.signer.external" resname="cr_panel.signer.external">
+                <source>the originator, outside this site</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.origin" resname="cr_panel.origin">
+                <source>Origin</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.origin.human" resname="cr_panel.origin.human">
+                <source>no AI use recorded</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.note" resname="cr_panel.note">
+                <source>The file carries a signed provenance manifest. It records how the asset came about; it is not a statement about the accuracy of the content.</source>
+            </trans-unit>
+            <trans-unit id="cr_live.heading" resname="cr_live.heading">
+                <source>Checked in the file</source>
+            </trans-unit>
+            <trans-unit id="cr_live.manifest" resname="cr_live.manifest">
+                <source>Manifest</source>
+            </trans-unit>
+            <trans-unit id="cr_live.present" resname="cr_live.present">
+                <source>present</source>
+            </trans-unit>
+            <trans-unit id="cr_live.stripped" resname="cr_live.stripped">
+                <source>removed from the file</source>
+            </trans-unit>
+            <trans-unit id="cr_live.absent" resname="cr_live.absent">
+                <source>none</source>
+            </trans-unit>
+            <trans-unit id="cr_live.issuer" resname="cr_live.issuer">
+                <source>Issuer</source>
+            </trans-unit>
+            <trans-unit id="cr_live.system" resname="cr_live.system">
+                <source>AI system</source>
+            </trans-unit>
+            <trans-unit id="cr_live.anchor" resname="cr_live.anchor">
+                <source>Signed with this site’s own certificate authority, which public validators do not know.</source>
+            </trans-unit>
+            <trans-unit id="cr_live.error" resname="cr_live.error">
+                <source>The live check did not answer. The details above are from our records.</source>
+            </trans-unit>
+            <trans-unit id="cr_panel.raw" resname="cr_panel.raw">
+                <source>Open the raw verification data</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
