@@ -3,6 +3,12 @@
 This package continues `moselwal/content-provenance` (last release 0.11.14) as
 `koh/content-provenance` with a fresh history. Releases from 0.12.0 on are listed here.
 
+## [0.12.4](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.3...v0.12.4) (2026-10-18)
+
+### :bug: Fixes
+
+* admit PHP 8.3 and test the floor on it ([136c3a4](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/136c3a4053d8224f0e48ed9af78cd0a9e402d857))
+
 ## [0.12.3](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.2...v0.12.3) (2026-10-18)
 
 ### :bug: Fixes
