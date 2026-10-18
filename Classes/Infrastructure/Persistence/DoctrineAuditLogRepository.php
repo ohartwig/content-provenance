@@ -118,7 +118,7 @@ final readonly class DoctrineAuditLogRepository implements AuditLogRepositoryInt
             : null;
 
         $aiReviewedAt = (int) $row['ai_reviewed_at'] > 0
-            ? new \DateTimeImmutable()->setTimestamp((int) $row['ai_reviewed_at'])
+            ? (new \DateTimeImmutable())->setTimestamp((int) $row['ai_reviewed_at'])
             : null;
 
         $aiReviewedBy = (int) $row['ai_reviewed_by'] > 0 ? (int) $row['ai_reviewed_by'] : null;
@@ -133,7 +133,7 @@ final readonly class DoctrineAuditLogRepository implements AuditLogRepositoryInt
             action: AuditAction::from((string) $row['action']),
             performedBy: (int) $row['performed_by'],
             performedByName: (string) $row['performed_by_name'],
-            performedAt: new \DateTimeImmutable()->setTimestamp((int) $row['performed_at']),
+            performedAt: (new \DateTimeImmutable())->setTimestamp((int) $row['performed_at']),
             fieldChanges: $fieldChanges,
             aiGenerated: (bool) $row['ai_generated'],
             aiProvider: '' !== (string) $row['ai_provider'] ? (string) $row['ai_provider'] : null,
