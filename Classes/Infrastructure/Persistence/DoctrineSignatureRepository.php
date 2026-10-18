@@ -99,7 +99,7 @@ final readonly class DoctrineSignatureRepository implements SignatureRepositoryI
             self::TABLE_NAME,
             [
                 'revoked' => 1,
-                'revoked_at' => new \DateTimeImmutable()->getTimestamp(),
+                'revoked_at' => (new \DateTimeImmutable())->getTimestamp(),
                 'revoked_by' => $revokedBy,
                 'revoked_reason' => $reason,
             ],
@@ -122,7 +122,7 @@ final readonly class DoctrineSignatureRepository implements SignatureRepositoryI
     private function hydrateSignature(array $row): Signature
     {
         $revokedAt = (int) $row['revoked_at'] > 0
-            ? new \DateTimeImmutable()->setTimestamp((int) $row['revoked_at'])
+            ? (new \DateTimeImmutable())->setTimestamp((int) $row['revoked_at'])
             : null;
 
         $revokedBy = (int) $row['revoked_by'] > 0 ? (int) $row['revoked_by'] : null;
@@ -136,7 +136,7 @@ final readonly class DoctrineSignatureRepository implements SignatureRepositoryI
             signature: (string) $row['signature'],
             signedBy: (int) $row['signed_by'],
             signedByName: (string) $row['signed_by_name'],
-            signedAt: new \DateTimeImmutable()->setTimestamp((int) $row['signed_at']),
+            signedAt: (new \DateTimeImmutable())->setTimestamp((int) $row['signed_at']),
             keyId: (string) $row['key_id'],
             revoked: (bool) $row['revoked'],
             revokedAt: $revokedAt,
