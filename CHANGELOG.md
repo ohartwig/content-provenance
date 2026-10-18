@@ -3,6 +3,13 @@
 This package continues `moselwal/content-provenance` (last release 0.11.14) as
 `koh/content-provenance` with a fresh history. Releases from 0.12.0 on are listed here.
 
+## [0.12.3](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.2...v0.12.3) (2026-10-18)
+
+### :bug: Fixes
+
+* **css:** satisfy the now-blocking stylelint gate ([6632ad8](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/6632ad83130dbf8e9c50354556d81a722e4bb502))
+* **docs:** write the README in English throughout ([baf6cb3](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/baf6cb34b3460ba28b886f15d6549584f3baf436))
+
 ## [0.12.2](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.1...v0.12.2) (2026-10-16)
 
 ### :repeat: Continuous Integrations
