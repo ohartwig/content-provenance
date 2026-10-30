@@ -3,6 +3,16 @@
 This package continues `moselwal/content-provenance` (last release 0.11.14) as
 `koh/content-provenance` with a fresh history. Releases from 0.12.0 on are listed here.
 
+## [0.12.5](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.4...v0.12.5) (2026-10-30)
+
+### :white_check_mark: Tests
+
+* build the DI container in this repository's pipeline ([cf6fee2](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/cf6fee2abf69afaf8e3eda26d19ccf62a07fcd03))
+
+### :repeat: Chores
+
+* **repo-templates:** sync ([16820c0](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/16820c051f48ad54ae42fe72d4bd889120a4560d))
+
 ## [0.12.4](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.3...v0.12.4) (2026-10-18)
 
 ### :bug: Fixes
