@@ -73,6 +73,15 @@ Classes/
 |----------|---------|
 | `/_provenance/api/verify` | Verify content signatures |
 | `/.well-known/provenance-keys` | Public key discovery |
+| `/_provenance/api/asset?file=<uid>` | Reads the C2PA manifest and IPTC tags out of a media file (anonymous, CORS `*`) |
+
+The asset endpoint spawns `c2patool` and `exiftool` on every cache miss, so it is bounded:
+
+- it answers only for files in a public storage that a live page shows (a non-hidden reference from a live, non-group-restricted record on a live page); every other uid answers `404`, the same as a uid that does not exist;
+- cache misses are limited per client address (default 20 per minute, sliding window; `$missesPerMinute` in `Services.yaml`, or `$GLOBALS['TYPO3_CONF_VARS']['SYS']['rateLimiter']['content-provenance-asset']['limit']`), past the limit `429` with `Retry-After`;
+- at most `$maxConcurrentInspections` (default 2) inspections run at once per application instance (non-blocking file locks under `var/lock`); all taken, `429`.
+
+Answers are cached for 24 hours against the file's size, modification time and SHA-1.
 
 ### Database Tables
 

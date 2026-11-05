@@ -73,6 +73,13 @@ services:
     arguments:
       $c2paToolPath: 'c2patool'
 
+  # Bounds for the anonymous asset endpoint (AUD-025-F02): cache misses per
+  # client address and minute, and inspections running at once per instance.
+  Koh\ContentProvenance\Infrastructure\Middleware\AssetProvenanceApiMiddleware:
+    arguments:
+      $missesPerMinute: 20
+      $maxConcurrentInspections: 2
+
   # ResignAiContentCommand wird über TYPO3's Schema-Registry registriert (autoconfigure).
 
   # Kein `@cache.…`-Argument: der Cache-Eintrag entsteht in ext_localconf.php
