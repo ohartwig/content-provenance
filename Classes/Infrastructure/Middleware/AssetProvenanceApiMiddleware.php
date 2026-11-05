@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koh\ContentProvenance\Infrastructure\Middleware;
 
 use Koh\ContentProvenance\Application\Service\ContentCredentialsReader;
+use Koh\ContentProvenance\Infrastructure\Persistence\PublicFileReferenceChecker;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -12,6 +13,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Locking\Exception\LockAcquireWouldBlockException;
+use TYPO3\CMS\Core\Locking\LockFactory;
+use TYPO3\CMS\Core\Locking\LockingStrategyInterface;
+use TYPO3\CMS\Core\RateLimiter\RateLimiterFactory;
 use TYPO3\CMS\Core\Resource\Exception\FileDoesNotExistException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 
@@ -41,6 +46,21 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
  * identity AND its size and modification time, so a re-upload invalidates it
  * while a flood of repeat requests costs one lookup.
  *
+ * The cache answers repeat requests for one file, not a walk over all uids
+ * (AUD-025-F02). Three more bounds therefore apply, in this order:
+ *
+ * 1. Only files a live page shows are answered at all
+ *    (PublicFileReferenceChecker, plus a public storage). Every other uid
+ *    answers 404 — the same 404 as a uid that does not exist, so the endpoint
+ *    no longer tells which files exist.
+ * 2. Cache misses are rate limited per client address (sliding window,
+ *    `$missesPerMinute`, overridable through
+ *    `$GLOBALS['TYPO3_CONF_VARS']['SYS']['rateLimiter']['content-provenance-asset']`).
+ *    Past the limit: 429 with Retry-After.
+ * 3. At most `$maxConcurrentInspections` inspections run at once per
+ *    application instance (non-blocking file locks, one per slot). All slots
+ *    taken: 429 with Retry-After, never a queue of waiting processes.
+ *
  * What it does NOT return: the stored prompt. It is recorded at upload time and
  * is internal wording; disclosing that AI was used is a different act from
  * publishing what was typed. Same reasoning as the frontend panel.
@@ -59,10 +79,17 @@ final class AssetProvenanceApiMiddleware implements MiddlewareInterface
     /** Muss mit dem Bezeichner in `ext_localconf.php` uebereinstimmen. */
     private const CACHE_IDENTIFIER = 'content_provenance_asset';
 
+    private const RATE_LIMITER_ID = 'content-provenance-asset';
+
     public function __construct(
         private readonly ContentCredentialsReader $reader,
         private readonly ResourceFactory $resourceFactory,
         private readonly CacheManager $cacheManager,
+        private readonly PublicFileReferenceChecker $publicFileReferenceChecker,
+        private readonly RateLimiterFactory $rateLimiterFactory,
+        private readonly LockFactory $lockFactory,
+        private readonly int $missesPerMinute = 20,
+        private readonly int $maxConcurrentInspections = 2,
     ) {}
 
     /**
@@ -100,7 +127,9 @@ final class AssetProvenanceApiMiddleware implements MiddlewareInterface
             return $this->json(['error' => 'Unknown file'], 404);
         }
 
-        if (!$file->exists()) {
+        if (!$file->exists()
+            || !$file->getStorage()->isPublic()
+            || !$this->publicFileReferenceChecker->isReferencedPublicly($fileUid)) {
             return $this->json(['error' => 'Unknown file'], 404);
         }
 
@@ -112,12 +141,64 @@ final class AssetProvenanceApiMiddleware implements MiddlewareInterface
 
         $cache = $this->cache();
         $payload = $cache->get($cacheKey);
-        if (!\is_array($payload)) {
-            $payload = $this->inspect($file->getForLocalProcessing(false), $fileUid);
-            $cache->set($cacheKey, $payload, [], self::CACHE_LIFETIME);
+        if (\is_array($payload)) {
+            return $this->json($payload, 200);
         }
 
+        $limit = $this->rateLimiterFactory->createRequestBasedLimiter($request, [
+            'id' => self::RATE_LIMITER_ID,
+            'policy' => 'sliding_window',
+            'limit' => $this->missesPerMinute,
+            'interval' => '1 minute',
+        ])->consume();
+        if (!$limit->isAccepted()) {
+            return $this->tooManyRequests(max(1, $limit->getRetryAfter()->getTimestamp() - time()));
+        }
+
+        $slot = $this->acquireInspectionSlot();
+        if (null === $slot) {
+            return $this->tooManyRequests(5);
+        }
+
+        try {
+            $payload = $this->inspect($file->getForLocalProcessing(false), $fileUid);
+        } finally {
+            $slot->release();
+            $slot->destroy();
+        }
+        $cache->set($cacheKey, $payload, [], self::CACHE_LIFETIME);
+
         return $this->json($payload, 200);
+    }
+
+    /**
+     * One of $maxConcurrentInspections non-blocking locks, or null when all
+     * are held by running inspections.
+     */
+    private function acquireInspectionSlot(): ?LockingStrategyInterface
+    {
+        for ($slot = 0; $slot < $this->maxConcurrentInspections; ++$slot) {
+            $locker = $this->lockFactory->createLocker(
+                'content_provenance_inspect_' . $slot,
+                LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK,
+            );
+            try {
+                if ($locker->acquire(LockingStrategyInterface::LOCK_CAPABILITY_EXCLUSIVE | LockingStrategyInterface::LOCK_CAPABILITY_NOBLOCK)) {
+                    return $locker;
+                }
+            } catch (LockAcquireWouldBlockException) {
+                // slot busy, try the next one
+            }
+        }
+
+        return null;
+    }
+
+    private function tooManyRequests(int $retryAfter): ResponseInterface
+    {
+        return $this->json(['error' => 'Too many inspections, retry later'], 429)
+            ->withHeader('Retry-After', (string) $retryAfter)
+            ->withHeader('Cache-Control', 'no-store');
     }
 
     /**
