@@ -6,9 +6,21 @@ namespace Koh\ContentProvenance\Infrastructure\KeyManagement\Provider;
 
 use Koh\ContentProvenance\Domain\Contract\KeyProviderInterface;
 use Koh\ContentProvenance\Domain\Exception\KeyNotFoundException;
-use Koh\ContentProvenance\Domain\Exception\KeyRotationNotSupportedException;
 use Koh\ContentProvenance\Domain\Model\KeyPair;
 
+/**
+ * The only signing-key source: an Ed25519 key pair derived from the TYPO3
+ * encryptionKey (AUD-025-F03, decision: documented derivation).
+ *
+ *   seed = first 32 bytes of sha256('content-provenance-signing-key:' . encryptionKey)
+ *   keyId = first 16 hex chars of sha256(publicKey)
+ *
+ * Consequences, also in the README: the content key is exactly as secret as
+ * the encryptionKey (Install Tool, application secret, backups); it cannot be
+ * rotated on its own; changing the encryptionKey yields a new key, and every
+ * signature made with the old one stops verifying, because only the current
+ * key is published and resolvable.
+ */
 final readonly class Typo3KeyProvider implements KeyProviderInterface
 {
     private string $encryptionKey;
@@ -68,10 +80,5 @@ final readonly class Typo3KeyProvider implements KeyProviderInterface
     public function getCurrentKeyId(): string
     {
         return $this->getSigningKeyPair()->keyId;
-    }
-
-    public function rotateKey(): KeyPair
-    {
-        throw KeyRotationNotSupportedException::forProvider(providerName: 'typo3');
     }
 }

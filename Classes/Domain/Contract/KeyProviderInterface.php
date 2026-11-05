@@ -13,6 +13,4 @@ interface KeyProviderInterface
     public function getPublicKeyById(string $keyId): string;
 
     public function getCurrentKeyId(): string;
-
-    public function rotateKey(): KeyPair;
 }
