@@ -19,4 +19,9 @@ interface AuditLogRepositoryInterface
      * @return list<AuditEntry>
      */
     public function findRecent(int $limit = 20): array;
+
+    /**
+     * Retention: removes entries performed before $cutoff, returns how many.
+     */
+    public function deleteOlderThan(\DateTimeImmutable $cutoff): int;
 }

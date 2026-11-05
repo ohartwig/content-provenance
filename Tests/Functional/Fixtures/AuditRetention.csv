@@ -1,0 +1,4 @@
+"tx_provenance_audit_log"
+,"uid","pid","content_table","content_uid","content_language","action","performed_by","performed_by_name","performed_at"
+,1,0,"pages",2,0,"update",1,"admin",1000000000
+,2,0,"pages",2,0,"update",1,"admin",4102444800

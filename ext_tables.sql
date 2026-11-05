@@ -40,7 +40,8 @@ CREATE TABLE tx_provenance_audit_log (
     PRIMARY KEY (uid),
     KEY content_lookup (content_table, content_uid, content_language),
     KEY action (action),
-    KEY ai_generated (ai_generated)
+    KEY ai_generated (ai_generated),
+    KEY performed_at (performed_at)
 );
 
 #

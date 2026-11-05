@@ -103,6 +103,19 @@ final readonly class DoctrineAuditLogRepository implements AuditLogRepositoryInt
         return $entries;
     }
 
+    public function deleteOlderThan(\DateTimeImmutable $cutoff): int
+    {
+        $queryBuilder = $this->getConnection()->createQueryBuilder();
+
+        return (int) $queryBuilder
+            ->delete(self::TABLE_NAME)
+            ->where($queryBuilder->expr()->lt(
+                'performed_at',
+                $queryBuilder->createNamedParameter($cutoff->getTimestamp(), ParameterType::INTEGER),
+            ))
+            ->executeStatement();
+    }
+
     private function getConnection(): Connection
     {
         return $this->connectionPool->getConnectionForTable(self::TABLE_NAME);
