@@ -3,6 +3,17 @@
 This package continues `moselwal/content-provenance` (last release 0.11.14) as
 `koh/content-provenance` with a fresh history. Releases from 0.12.0 on are listed here.
 
+## [0.12.6](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.5...v0.12.6) (2026-11-05)
+
+### :bug: Fixes
+
+* **security:** register the audit-trail hook and keep it to signed fields ([a614f15](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/a614f154569f03ac2ed33f5f31fa42bceea60d25))
+
+### :repeat: Chores
+
+* **repo-templates:** sync ([bcbe547](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/bcbe547040704731ca22cd629a52a43b1889216e))
+* **repo-templates:** sync ([c41d6ac](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/c41d6acc39c0ca13fc7e17937a837fdb5d33a262))
+
 ## [0.12.5](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.4...v0.12.5) (2026-10-30)
 
 ### :white_check_mark: Tests
