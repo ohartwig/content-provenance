@@ -11,12 +11,10 @@ services:
       - '../Classes/Domain/Enum/*'
       - '../Classes/Domain/Exception/*'
 
-  Koh\ContentProvenance\Infrastructure\KeyManagement\KeyProviderFactory:
-    arguments:
-      $providerType: !php/const Koh\ContentProvenance\Domain\Enum\KeyProviderType::TYPO3
-
+  # The signing key is derived from the TYPO3 encryptionKey; there is no other
+  # provider and no rotation (AUD-025-F03, README "Signing key").
   Koh\ContentProvenance\Domain\Contract\KeyProviderInterface:
-    factory: ['@Koh\ContentProvenance\Infrastructure\KeyManagement\KeyProviderFactory', 'create']
+    alias: Koh\ContentProvenance\Infrastructure\KeyManagement\Provider\Typo3KeyProvider
 
   Koh\ContentProvenance\Domain\Contract\SignatureRepositoryInterface:
     alias: Koh\ContentProvenance\Infrastructure\Persistence\DoctrineSignatureRepository

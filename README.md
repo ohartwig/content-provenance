@@ -4,7 +4,7 @@
 [![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-blue.svg)](https://php.net/)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/License-GPL--2.0--or--later-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 
-Content integrity and provenance tracking for TYPO3 using Ed25519 digital signatures. Provides an audit trail, verification API, and key management — built with EU AI Act compliance in mind.
+Content integrity and provenance tracking for TYPO3 using Ed25519 digital signatures. Provides an audit trail and a verification API — built with EU AI Act compliance in mind.
 
 ## Features
 
@@ -13,8 +13,8 @@ Content integrity and provenance tracking for TYPO3 using Ed25519 digital signat
 - **Ed25519 Digital Signatures** — Cryptographic content signing using libsodium
 - **Audit Trail** — every DataHandler save that touches a signed field of a signed table (`pages`, `tt_content`, see `SignedFieldsResolver` in `Services.yaml`) writes one row: table, uid, language, action, backend user, time and the *names* of the changed signed fields — never their values, and nothing for any other table. The same hook revokes the record's signature (in the record's own language). Retention: `provenance:prune-audit --days=730` (default 730 days) deletes older rows; schedule it daily (scheduler task "Execute console commands" or a CronJob), otherwise the table grows without bound
 - **Verification API** — Public endpoint for third-party content integrity verification
-- **Key Provider Abstraction** — Pluggable key storage backends (file, environment, vault)
-- **Revocation Checking** — Key revocation support for compromised signing keys
+- **Signing key derived from the TYPO3 `encryptionKey`** — one key per installation, no separate key store and no rotation; see [Signing key](#signing-key)
+- **Signature revocation** — a record's signature carries a `revoked` flag; there is no *key* revocation
 - **Well-Known Endpoint** — Public key discovery via `/.well-known/provenance-keys`
 
 ### AI Asset Provenance (EU AI Act Art. 50, since v0.6.0)
@@ -63,7 +63,7 @@ Without the binaries the extension keeps working; only the auto-detection and IP
 Classes/
 ├── Domain/          # Signature models, key value objects, contracts
 ├── Application/     # Signing services, verification orchestration
-├── Infrastructure/  # Key providers, repositories, API middleware
+├── Infrastructure/  # Key derivation, repositories, API middleware
 └── Presentation/    # Controllers, event listeners
 ```
 
@@ -103,9 +103,27 @@ Answers are cached for 24 hours against the file's size, modification time and S
 | `pages` | `tx_provenance_origin` | Page-body origin (RTE / generated articles) |
 | `pages` | `tx_provenance_ai_system` | Model name for the page body |
 
+## Signing key
+
+There is one signing key per installation, and it is derived from the TYPO3 `encryptionKey` (`$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']`) by `Typo3KeyProvider`, the only key provider (`Configuration/Services.yaml` aliases `KeyProviderInterface` to it):
+
+```
+seed      = first 32 bytes of sha256("content-provenance-signing-key:" . encryptionKey)
+key pair  = sodium_crypto_sign_seed_keypair(seed)          (Ed25519)
+keyId     = first 16 hex characters of sha256(public key)
+```
+
+What follows from this, by design:
+
+- **The content key is exactly as secret as the `encryptionKey`.** Whoever can read the `encryptionKey` — administrators in the Install Tool, the application secret it is deployed from, backups of the system configuration — can sign records that `/.well-known/provenance-keys` verifies. Protect the `encryptionKey` accordingly.
+- **The key cannot be rotated on its own.** There is no `provenance:rotate-key` command and no key archive. The only way to get a new key is to change the `encryptionKey`, which also invalidates cHash values, form-protection tokens and everything else TYPO3 derives from it.
+- **Changing the `encryptionKey` invalidates every existing signature.** `/.well-known/provenance-keys` publishes only the current key, and verification resolves only the current key id, so records signed before the change stop verifying. Re-sign them with `provenance:sign-all` afterwards.
+
+A key that lives on its own (a file provider on a mount the application owns, with an archive of retired keys that stays published) is a possible later feature, not part of this release.
+
 ## Configuration
 
-Configure key providers and signing policies through TYPO3 site settings. Supports multiple key providers for different environments (development, staging, production).
+The signed tables and fields are configured on `SignedFieldsResolver` in `Configuration/Services.yaml`. The signing key has no configuration; see [Signing key](#signing-key). The site set's `signing`, `verification` and `wellKnown` settings are not read by any class at present.
 
 ## Development
 

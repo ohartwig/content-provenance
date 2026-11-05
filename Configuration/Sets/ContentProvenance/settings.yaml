@@ -1,9 +1,4 @@
 contentProvenance:
-  keyProvider:
-    type: 'typo3'
-    filePath: ''
-    vaultUrl: ''
-    vaultToken: ''
   signing:
     tables:
       pages:
