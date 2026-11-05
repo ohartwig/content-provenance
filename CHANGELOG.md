@@ -3,6 +3,12 @@
 This package continues `moselwal/content-provenance` (last release 0.11.14) as
 `koh/content-provenance` with a fresh history. Releases from 0.12.0 on are listed here.
 
+## [0.12.7](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.6...v0.12.7) (2026-11-05)
+
+### :bug: Fixes
+
+* **security:** bound the anonymous asset provenance endpoint ([0fbf612](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/0fbf6125efdced840d7112ff2d49b350652232cb))
+
 ## [0.12.6](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.5...v0.12.6) (2026-11-05)
 
 ### :bug: Fixes
