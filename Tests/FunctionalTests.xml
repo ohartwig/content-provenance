@@ -38,6 +38,8 @@
     </source>
     <php>
         <ini name="display_errors" value="1"/>
+        <!-- DataHandler tests build the full TCA schema; 128M is not enough. -->
+        <ini name="memory_limit" value="1G"/>
         <env name="TYPO3_CONTEXT" value="Testing"/>
     </php>
 </phpunit>

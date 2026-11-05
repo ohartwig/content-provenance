@@ -11,7 +11,7 @@ Content integrity and provenance tracking for TYPO3 using Ed25519 digital signat
 ### Content Signing (Ed25519)
 
 - **Ed25519 Digital Signatures** — Cryptographic content signing using libsodium
-- **Audit Trail** — Immutable log of all content changes with actor, timestamp, and context
+- **Audit Trail** — every DataHandler save that touches a signed field of a signed table (`pages`, `tt_content`, see `SignedFieldsResolver` in `Services.yaml`) writes one row: table, uid, language, action, backend user, time and the *names* of the changed signed fields — never their values, and nothing for any other table. The same hook revokes the record's signature (in the record's own language). Retention: `provenance:prune-audit --days=730` (default 730 days) deletes older rows; schedule it daily (scheduler task "Execute console commands" or a CronJob), otherwise the table grows without bound
 - **Verification API** — Public endpoint for third-party content integrity verification
 - **Key Provider Abstraction** — Pluggable key storage backends (file, environment, vault)
 - **Revocation Checking** — Key revocation support for compromised signing keys
@@ -79,7 +79,7 @@ Classes/
 | Table | Purpose |
 |-------|---------|
 | `tx_provenance_signature` | Content signatures (Ed25519) |
-| `tx_provenance_audit_log` | Audit trail entries |
+| `tx_provenance_audit_log` | Audit trail entries (signed tables only, field names only, pruned by `provenance:prune-audit`) |
 
 ### Extended TCA Columns (AI Provenance, v0.6.0+)
 

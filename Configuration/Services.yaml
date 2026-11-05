@@ -42,6 +42,12 @@ services:
   Koh\ContentProvenance\Presentation\Controller\ProvenanceDashboardController:
     public: true
 
+  # Registered as processDatamapClass in ext_localconf.php. The DataHandler
+  # resolves hooks through GeneralUtility::makeInstance, which only finds
+  # public services; a private one would be built without its arguments.
+  Koh\ContentProvenance\Infrastructure\Hooks\DataHandlerHook:
+    public: true
+
   # Asset-Provenance auto-detection: c2patool + exiftool subprocess wrappers.
   # Binary paths are PATH-resolved by default; override via Site Settings if
   # tools live in non-standard locations. LoggerAwareInterface gets the

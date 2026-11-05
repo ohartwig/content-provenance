@@ -11,6 +11,13 @@ defined('TYPO3') or exit;
 $GLOBALS['TYPO3_CONF_VARS']['BE']['stylesheets']['content_provenance']
     = 'EXT:content_provenance/Resources/Public/Css/';
 
+// Audit trail and signature invalidation on every DataHandler save of a
+// signed table (AUD-025-F01: this registration was missing, so the hook never
+// ran). The class is public in Services.yaml, so the DataHandler receives the
+// container-built instance with its dependencies.
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['content_provenance']
+    = Koh\ContentProvenance\Infrastructure\Hooks\DataHandlerHook::class;
+
 // Cache for the media detection endpoint. The endpoint is public and
 // unauthenticated by design, and answering it means spawning c2patool and
 // exiftool — so caching is what keeps it from being a way to fork processes on
