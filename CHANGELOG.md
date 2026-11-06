@@ -3,6 +3,21 @@
 This package continues `moselwal/content-provenance` (last release 0.11.14) as
 `koh/content-provenance` with a fresh history. Releases from 0.12.0 on are listed here.
 
+## [1.0.1](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.7...v1.0.1) (2026-11-06)
+
+### :boom: BREAKING CHANGES
+
+* the console command provenance:rotate-key and the interface method KeyProviderInterface::rotateKey() are removed, together with the keyProvider site settings, KeyProviderFactory, KeyProviderType, FileKeyProvider and KeyRotationNotSupportedException.
+
+### :bug: Fixes
+
+* **security:** document the derived signing key, drop dead provider and rotate-key ([02b989b](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/02b989b32cac739869f30e84305f1848276b171a))
+
+### :repeat: Chores
+
+* **deps:** update dependency registry.ole-hartwig.eu/devops/images/franken-php/ci to v3.2.138-8.5 ([4a0fe84](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/4a0fe84ce7a58913c1ba255d5fc80857e71833e0))
+* **deps:** update dependency registry.ole-hartwig.eu/devops/images/franken-php/ci to v3.2.137-8.5 ([e346af8](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/commit/e346af8ff3428f8106fc05ac6a95af463e9c480e))
+
 ## [1.0.0](https://git.ole-hartwig.eu/ai-ready-platform/platform/content-provenance/compare/v0.12.7...v1.0.0) (2026-11-05)
 
 ### :boom: BREAKING CHANGES
